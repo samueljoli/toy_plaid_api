@@ -1,3 +1,4 @@
+# Start the services
 up:
 	@docker-compose up -d
 
@@ -21,3 +22,5 @@ clean:
 dev:
 	@cargo watch -x run
 
+migrate:
+	@sqlx migrate run --database-url postgres://postgres:password@localhost:5432/plaid
