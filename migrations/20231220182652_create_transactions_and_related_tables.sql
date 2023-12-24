@@ -6,58 +6,22 @@ CREATE TABLE accounts (
   subtype VARCHAR(255) NOT NULL, 
   type VARCHAR(255) NOT NULL
 );
-CREATE TABLE locations (
-  id SERIAL PRIMARY KEY, 
-  address VARCHAR(255), 
-  city VARCHAR(255), 
-  region VARCHAR(255), 
-  postal_code VARCHAR(255), 
-  country VARCHAR(255), 
-  lat FLOAT, 
-  lon FLOAT, 
-  store_number VARCHAR(255)
-);
-CREATE TABLE payment_meta (
-  id SERIAL PRIMARY KEY, 
-  by_order_of VARCHAR(255), 
-  payee VARCHAR(255), 
-  payer VARCHAR(255), 
-  payment_method VARCHAR(255), 
-  payment_processor VARCHAR(255), 
-  ppd_id VARCHAR(255), 
-  reason VARCHAR(255), 
-  reference_number VARCHAR(255)
-);
 CREATE TABLE personal_finance_categories (
   id SERIAL PRIMARY KEY, 
   primary_category VARCHAR(255) NOT NULL, 
-  detailed VARCHAR(255) NOT NULL, 
-  confidence_level VARCHAR(255) NOT NULL
+  detailed VARCHAR(255) NOT NULL
 );
 CREATE TABLE transactions (
   id SERIAL PRIMARY KEY, 
   account_id INT REFERENCES accounts(id), 
   amount FLOAT NOT NULL, 
   iso_currency_code VARCHAR(255) NOT NULL, 
-  unofficial_currency_code VARCHAR(255), 
-  check_number VARCHAR(255), 
   date DATE NOT NULL, 
-  datetime TIMESTAMP NOT NULL, 
-  authorized_date DATE NOT NULL, 
-  authorized_datetime TIMESTAMP NOT NULL, 
-  location_id INT REFERENCES locations(id), 
   name VARCHAR(255) NOT NULL, 
   merchant_name VARCHAR(255) NOT NULL, 
-  merchant_entity_id VARCHAR(255) NOT NULL, 
-  logo_url VARCHAR(255) NOT NULL, 
-  website VARCHAR(255) NOT NULL, 
-  payment_meta_id INT REFERENCES payment_meta(id), 
   payment_channel VARCHAR(255) NOT NULL, 
   pending BOOLEAN NOT NULL, 
-  pending_transaction_id VARCHAR(255), 
-  personal_finance_category_id INT REFERENCES personal_finance_categories(id), 
-  personal_finance_category_icon_url VARCHAR(255) NOT NULL, 
-  transaction_code VARCHAR(255)
+  personal_finance_category_id INT REFERENCES personal_finance_categories(id)
 );
 CREATE TABLE items (
   id SERIAL PRIMARY KEY, 
@@ -67,49 +31,57 @@ CREATE TABLE items (
   update_type VARCHAR(255) NOT NULL, 
   webhook VARCHAR(255) NOT NULL
 );
--- TransactionPersonalFinanceCategory Join Table
-CREATE TABLE transaction_personal_finance_categories (
-  transaction_id INT REFERENCES transactions(id), 
-  personal_finance_category_id INT REFERENCES personal_finance_categories(id), 
-  PRIMARY KEY (
-    transaction_id, personal_finance_category_id
-  )
-);
--- Enum Tables or Check Constraints (example for one Enum)
--- For simplicity, using check constraints here
-ALTER TABLE 
+
+ALTER TABLE
   personal_finance_categories 
-ADD 
+ADD
   CONSTRAINT chk_primary_category CHECK (
     primary_category IN (
-      'Income', 'TransferIn', 'TransferOut', 
-      'LoanPayments', 'BankFees', 'Entertainment', 
-      'FoodAndDrink', 'GeneralMerchandise', 
-      'HomeImprovement', 'Medical', 'PersonalCare', 
-      'GeneralServices', 'GovernmentAndNonProfit', 
-      'Transportation', 'Travel', 'RentAndUtilities'
+      'INCOME', 'TRANSFER_IN', 'TRANSFER_OUT',
+      'LOAN_PAYMENTS', 'BANK_FEES', 'ENTERTAINMENT',
+      'FOOD_AND_DRINK', 'GENERAL_MERCHANDISE',
+      'HOME_IMPROVEMENT', 'MEDICAL', 'PERSONAL_CARE',
+      'GENERAL_SERVICES', 'GOVERNMENT_AND_NON_PROFIT',
+      'TRANSPORTATION', 'TRAVEL', 'RENT_AND_UTILITIES'
     )
   );
-ALTER TABLE 
+ALTER TABLE
   personal_finance_categories 
-ADD 
+ADD
   CONSTRAINT chk_detailed CHECK (
     detailed IN (
-      'IncomeDividends', 'IncomeInterestEarned', 
-      'IncomeRetirementPension', 'IncomeTaxRefund', 
-      'IncomeUnemployment', 'IncomeWages', 
-      'IncomeOtherIncome', 'TransferInCashAdvancesAndLoans', 
-      'TransferInDeposit', 'TransferInInvestmentAndRetirementFunds', 
-      'TransferInSavings', 'TransferInAccountTransfer', 
-      'TransferInOtherTransferIn', 'TransferOutInvestmentAndRetirementFunds', 
-      'TransferOutSavings', 'TransferOutWithdrawal', 
-      'TransferOutAccountTransfer', 'TransferOutOtherTransferOut', 
-      'LoanPaymentsCarPayment', 'LoanPaymentsCreditCardPayment', 
-      'LoanPaymentsPersonalLoanPayment', 
-      'LoanPaymentsMortgagePayment', 
-      'LoanPaymentsStudentLoanPayment', 
-      'LoanPaymentsOtherPayment', 'BankFeesAtmFees', 
-      'BankFeesForeignTransaction'
+      'INCOME_WAGES', 'INCOME_OTHER_INCOME',
+      'TRANSFER_IN_CASH_ADVANCES_AND_LOANS', 'TRANSFER_IN_DEPOSIT',
+      'TRANSFER_IN_SAVINGS', 'TRANSFER_IN_ACCOUNT_TRANSFER',
+      'TRANSFER_IN_OTHER_TRANSFER_IN', 'TRANSFER_OUT_INVESTMENT_AND_RETIREMENT_FUNDS',
+      'TRANSFER_OUT_SAVINGS', 'TRANSFER_OUT_WITHDRAWAL',
+      'TRANSFER_OUT_ACCOUNT_TRANSFER', 'TRANSFER_OUT_OTHER_TRANSFER_OUT',
+      'ENTERTAINMENT_OTHER_ENTERTAINMENT', 'FOOD_AND_DRINK_BEER_WINE_AND_LIQUOR',
+      'FOOD_AND_DRINK_COFFEE', 'FOOD_AND_DRINK_FAST_FOOD',
+      'FOOD_AND_DRINK_GROCERIES', 'FOOD_AND_DRINK_RESTAURANT',
+      'GENERAL_MERCHANDISE_BOOKSTORES_AND_NEWSSTANDS',
+      'GENERAL_MERCHANDISE_CLOTHING_AND_ACCESSORIES',
+      'GENERAL_MERCHANDISE_CONVENIENCE_STORES',
+      'GENERAL_MERCHANDISE_DEPARTMENT_STORES',
+      'GENERAL_MERCHANDISE_DISCOUNT_STORES', 'GENERAL_MERCHANDISE_ELECTRONICS',
+      'GENERAL_MERCHANDISE_GIFTS_AND_NOVELTIES',
+      'GENERAL_MERCHANDISE_OFFICE_SUPPLIES',
+      'GENERAL_MERCHANDISE_ONLINE_MARKETPLACES',
+      'GENERAL_MERCHANDISE_PET_SUPPLIES', 'GENERAL_MERCHANDISE_SPORTING_GOODS',
+      'GENERAL_MERCHANDISE_SUPERSTORES', 'GENERAL_MERCHANDISE_TOBACCO_AND_VAPE',
+      'GENERAL_MERCHANDISE_OTHER_GENERAL_MERCHANDISE',
+      'GENERAL_SERVICES_ACCOUNTING_AND_FINANCIAL_PLANNING',
+      'GENERAL_SERVICES_AUTOMOTIVE', 'GENERAL_SERVICES_CHILDCARE',
+      'GENERAL_SERVICES_CONSULTING_AND_LEGAL', 'GENERAL_SERVICES_EDUCATION',
+      'GENERAL_SERVICES_INSURANCE', 'GENERAL_SERVICES_POSTAGE_AND_SHIPPING',
+      'GENERAL_SERVICES_STORAGE', 'GENERAL_SERVICES_OTHER_GENERAL_SERVICES',
+      'GOVERNMENT_AND_NON_PROFIT_DONATIONS',
+      'GOVERNMENT_AND_NON_PROFIT_GOVERNMENT_DEPARTMENTS_AND_AGENCIES',
+      'GOVERNMENT_AND_NON_PROFIT_TAX_PAYMENT',
+      'GOVERNMENT_AND_NON_PROFIT_OTHER_GOVERNMENT_AND_NON_PROFIT',
+      'TRANSPORTATION_TAXIS_AND_RIDE_SHARES', 'TRAVEL_FLIGHTS',
+      'RENT_AND_UTILITIES_GAS_AND_ELECTRICITY',
+      'RENT_AND_UTILITIES_INTERNET_AND_CABLE', 'RENT_AND_UTILITIES_RENT',
+      'RENT_AND_UTILITIES_TELEPHONE
     )
   );
-

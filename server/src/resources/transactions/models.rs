@@ -16,13 +16,35 @@ struct ApiResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+enum AccountType {
+    Investment,
+    Credit,
+    Depository,
+    Loan,
+    Other,
+}
+// TODO: Handle AccountType and SubType validation combo (Runtime)
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, ToSchema)]
+enum DepositorySubtype {
+    Savings,
+    Hsa,
+    Cd,
+    MoneyMarket,
+    Paypal,
+    Prepaid,
+    CashManagement,
+    Ebt,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 struct Account {
     account_id: String,
     mask: String,
     name: String,
     official_name: String,
+    r#type: AccountType,
     subtype: String,
-    r#type: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
@@ -42,7 +64,6 @@ struct Transaction {
     merchant_entity_id: String,
     logo_url: String,
     website: String,
-    payment_meta: PaymentMeta, // Foreign key to PaymentMeta
     payment_channel: String,
     pending: bool,
     pending_transaction_id: Option<String>,
@@ -62,18 +83,6 @@ struct Location {
     lat: Option<f64>,
     lon: Option<f64>,
     store_number: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
-struct PaymentMeta {
-    by_order_of: Option<String>,
-    payee: Option<String>,
-    payer: Option<String>,
-    payment_method: Option<String>,
-    payment_processor: Option<String>,
-    ppd_id: Option<String>,
-    reason: Option<String>,
-    reference_number: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]

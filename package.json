@@ -1,15 +1,17 @@
 {
   "name": "toy_plaid_api",
   "version": "0.0.1",
-  "description": "",
+  "description": "Upsert fake data into Toy Plaid DB",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "faker": "^6.6.6",
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
+    "csv-parse": "^5.5.3",
+    "knex": "^3.1.0",
     "pg": "^8.11.3"
   }
 }

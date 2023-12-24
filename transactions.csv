@@ -1,0 +1,41 @@
+name,merchant_name,payment_channel,amount,date
+Initial Deposit,Direct,online,10000.0,2023-11-01
+Paystub,Oxide Computers,online,5567.0,2023-11-01
+Bank Transfer,Plaid Gold Saving,online,-1670.0,2023-11-01
+Sundown Bar,Sundown Bar,in_person,-35.64,2023-11-06
+Manual Photo,Manual Photo,online,-37.8,2023-11-06
+Trader Joes,Trader Joes,in_person,-98.99,2023-11-06
+Trader Joes,Trader Joes,in_person,-162.9,2023-11-07
+Sundown Bar,Sundown Bar,in_person,-113.12,2023-11-07
+Manual Photo,Manual Photo,online,-24.93,2023-11-09
+Bank Transfer,Plaid Gold Saving,online,-1670.0,2023-11-15
+Paystub,Oxide Computers,online,5567.0,2023-11-15
+GrandChamps Kitchen,GrandChamps Kitchen,in_person,-79.69,2023-11-17
+Camellia Black Tea,Camellia Black Tea,online,-11.18,2023-11-17
+Manual Photo,Manual Photo,online,-21.68,2023-11-18
+Door Dash,Door Dash,online,-48.58,2023-11-19
+Camellia Black Tea,Camellia Black Tea,in_person,-7.62,2023-11-19
+Amazon,Amazon,online,-99.28,2023-11-21
+Door Dash,Door Dash,online,-29.66,2023-11-23
+Trader Joes,Trader Joes,in_person,-102.24,2023-11-23
+Sundown Bar,Sundown Bar,in_person,-39.68,2023-11-24
+Paystub,Oxide Computers,online,5567.0,2023-12-01
+Bank Transfer,Plaid Gold Saving,online,-1670.0,2023-12-01
+Manual Photo,Manual Photo,online,-26.45,2023-12-04
+Sundown Bar,Sundown Bar,in_person,-37.74,2023-12-06
+GrandChamps Kitchen,GrandChamps Kitchen,in_person,-125.66,2023-12-07
+Trader Joes,Trader Joes,in_person,-102.52,2023-12-08
+Door Dash,Door Dash,online,-16.93,2023-12-09
+Trader Joes,Trader Joes,in_person,-177.25,2023-12-10
+Trader Joes,Trader Joes,in_person,-169.75,2023-12-13
+Camellia Black Tea,Camellia Black Tea,in_person,-6.83,2023-12-13
+Lyft,Lyft,online,-28.96,2023-12-14
+Paystub,Oxide Computers,online,5567.0,2023-12-15
+Bank Transfer,Plaid Gold Saving,online,-1670.0,2023-12-15
+GrandChamps Kitchen,GrandChamps Kitchen,in_person,-54.35,2023-12-16
+Manual Photo,Manual Photo,online,-28.44,2023-12-18
+GrandChamps Kitchen,GrandChamps Kitchen,in_person,-130.45,2023-12-19
+Sundown Bar,Sundown Bar,in_person,-56.39,2023-12-20
+Amazon,Amazon,online,-54.5,2023-12-20
+Trader Joes,Trader Joes,in_person,-92.26,2023-12-21
+Door Dash,Door Dash,online,-17.54,2023-12-23
