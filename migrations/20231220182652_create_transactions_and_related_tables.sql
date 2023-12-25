@@ -1,4 +1,4 @@
-CREATE TABLE accounts (
+CREATE TABLE account (
   id SERIAL PRIMARY KEY, 
   mask VARCHAR(255) NOT NULL, 
   name VARCHAR(255) NOT NULL, 
@@ -6,14 +6,14 @@ CREATE TABLE accounts (
   subtype VARCHAR(255) NOT NULL, 
   type VARCHAR(255) NOT NULL
 );
-CREATE TABLE personal_finance_categories (
+CREATE TABLE personal_finance_category (
   id SERIAL PRIMARY KEY, 
   primary_category VARCHAR(255) NOT NULL, 
   detailed VARCHAR(255) NOT NULL
 );
-CREATE TABLE transactions (
+CREATE TABLE transaction (
   id SERIAL PRIMARY KEY, 
-  account_id INT REFERENCES accounts(id), 
+  account_id INT REFERENCES account(id), 
   amount FLOAT NOT NULL, 
   iso_currency_code VARCHAR(255) NOT NULL, 
   date DATE NOT NULL, 
@@ -21,7 +21,7 @@ CREATE TABLE transactions (
   merchant_name VARCHAR(255) NOT NULL, 
   payment_channel VARCHAR(255) NOT NULL, 
   pending BOOLEAN NOT NULL, 
-  personal_finance_category_id INT REFERENCES personal_finance_categories(id)
+  personal_finance_category_id INT REFERENCES personal_finance_category(id)
 );
 CREATE TABLE items (
   id SERIAL PRIMARY KEY, 
@@ -33,7 +33,7 @@ CREATE TABLE items (
 );
 
 ALTER TABLE
-  personal_finance_categories 
+  personal_finance_category
 ADD
   CONSTRAINT chk_primary_category CHECK (
     primary_category IN (
@@ -46,7 +46,7 @@ ADD
     )
   );
 ALTER TABLE
-  personal_finance_categories 
+  personal_finance_category
 ADD
   CONSTRAINT chk_detailed CHECK (
     detailed IN (
@@ -82,6 +82,6 @@ ADD
       'TRANSPORTATION_TAXIS_AND_RIDE_SHARES', 'TRAVEL_FLIGHTS',
       'RENT_AND_UTILITIES_GAS_AND_ELECTRICITY',
       'RENT_AND_UTILITIES_INTERNET_AND_CABLE', 'RENT_AND_UTILITIES_RENT',
-      'RENT_AND_UTILITIES_TELEPHONE
+      'RENT_AND_UTILITIES_TELEPHONE'
     )
   );

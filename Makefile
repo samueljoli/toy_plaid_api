@@ -22,5 +22,8 @@ clean:
 dev:
 	@cargo watch -x run
 
+lint:
+	@cargo clippy --fix; cargo fmt
+
 migrate:
 	@sqlx migrate run --database-url postgres://postgres:password@localhost:5432/plaid

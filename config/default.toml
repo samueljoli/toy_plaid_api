@@ -6,3 +6,4 @@ otel_collector_host = "http://localhost"
 otel_collector_port = 4317
 # Data
 database_url = "postgres://postgres:password@localhost:5432/plaid"
+db_max_connections = 50

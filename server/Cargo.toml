@@ -28,6 +28,19 @@ utoipa = { version = "4" }
 utoipa-redoc = { version = "2.0.0", features = ["axum"] }
 url = "2.2.0"
 uuid = { version = "1.3.0", features = ["serde"] }
+sea-query = { version = "0", features = ["derive", "attr"] }
+sea-query-binder = { version = "0", features = [
+  "sqlx-postgres",
+  "with-chrono",
+  "with-json",
+  "with-rust_decimal",
+  "with-bigdecimal",
+  "with-uuid",
+  "with-time",
+  "with-ipnetwork",
+  "with-mac_address",
+  "runtime-tokio-rustls",
+] }
 sqlx = { version = "0.7", features = [
   "chrono",
   "migrate",

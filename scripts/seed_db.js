@@ -42,7 +42,7 @@ const seed_personal_finance_categories = async (client) => {
     detailed: record.detailed,
   }))
 
-  return client('personal_finance_categories').insert(data).returning('*')
+  return client('personal_finance_category').insert(data).returning('*')
 }
 
 const seed_checkings_account = async (client, categories_map) => {
@@ -50,7 +50,7 @@ const seed_checkings_account = async (client, categories_map) => {
 
   let checking_transactions = []
 
-  const [account] = await client('accounts').insert(
+  const [account] = await client('account').insert(
     {
       mask: '0000',
       name: 'Plaid Checking',
@@ -72,7 +72,7 @@ const seed_checkings_account = async (client, categories_map) => {
     personal_finance_category_id: categories_map[record.personal_finance_category],
   }))
 
-  await client('transactions').insert(data)
+  await client('transaction').insert(data)
 }
 
 const seed_savings_account = async (client, categories_map) => {
@@ -80,7 +80,7 @@ const seed_savings_account = async (client, categories_map) => {
 
   let savings_transactions = []
 
-  const [account] = await client('accounts').insert(
+  const [account] = await client('account').insert(
     {
       mask: '1111',
       name: 'Plaid Savings',
@@ -102,7 +102,7 @@ const seed_savings_account = async (client, categories_map) => {
     personal_finance_category_id: categories_map[record.personal_finance_category],
   }))
 
-  await client('transactions').insert(data)
+  await client('transaction').insert(data)
 }
 
 (async function() {

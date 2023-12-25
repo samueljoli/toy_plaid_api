@@ -14,6 +14,10 @@ pub mod resources;
 
 pub mod utils;
 
+use resources::transactions;
+
+use resources::accounts;
+
 #[derive(Debug, Clone)]
 pub struct AppState {
     config: settings::Settings,
@@ -23,22 +27,26 @@ pub struct AppState {
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        resources::transactions::router::get_transaction_by_id,
+        transactions::router::get_transaction_by_id,
+        transactions::router::get_all_transactions,
+        accounts::router::get_account_by_id,
+        accounts::router::get_all_accounts,
+    ),
+    components(
+        schemas(transactions::models::Transaction),
+        schemas(accounts::models::Account),
     ),
     tags(
-        (name = "todo", description = "Todo items management API")
+        (name = "🧸 Toy Plaid API", description = "A toy implementation of the Plaid API")
     )
 )]
 struct ApiDoc;
 
-fn health_check_router() -> Router<AppState> {
-    Router::new().route("/health", get(|| async { Ok::<_, ()>(()) }))
-}
-
-fn make_app(config: settings::Settings, db: Pool<Postgres>) -> Router {
+fn make_main_router(config: settings::Settings, db: Pool<Postgres>) -> Router {
     Router::new()
-        .merge(health_check_router())
+        .merge(Router::new().route("/health", get(|| async { Ok::<_, ()>(()) })))
         .merge(resources::transactions::router::api())
+        .merge(resources::accounts::router::api())
         .merge(Redoc::with_url("/redoc", ApiDoc::openapi()))
         .with_state(AppState { config, db })
 }
@@ -48,5 +56,5 @@ pub fn make_server(
     config: settings::Settings,
     db: Pool<Postgres>,
 ) -> Serve<IntoMakeService<Router>, Router> {
-    axum::serve(listener, make_app(config, db).into_make_service())
+    axum::serve(listener, make_main_router(config, db).into_make_service())
 }
