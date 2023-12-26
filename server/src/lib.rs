@@ -5,6 +5,8 @@ use axum::{
 };
 use sqlx::{Pool, Postgres};
 use tokio::net::TcpListener;
+use tower::ServiceBuilder;
+use tower_http::cors::{Any, CorsLayer};
 use utoipa::OpenApi;
 use utoipa_redoc::{Redoc, Servable};
 
@@ -48,6 +50,7 @@ fn make_main_router(config: settings::Settings, db: Pool<Postgres>) -> Router {
         .merge(resources::transactions::router::api())
         .merge(resources::accounts::router::api())
         .merge(Redoc::with_url("/redoc", ApiDoc::openapi()))
+        .layer(ServiceBuilder::new().layer(CorsLayer::new().allow_origin(Any)))
         .with_state(AppState { config, db })
 }
 
