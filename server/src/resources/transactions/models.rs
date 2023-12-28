@@ -2,16 +2,6 @@ use sea_query::enum_def;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use crate::resources::accounts::models::Account;
-
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
-struct ApiResponse {
-    accounts: Vec<Account>,
-    transactions: Vec<Transaction>,
-    total_transactions: u32,
-    request_id: String,
-}
-
 #[enum_def] // => Generates TransactionIden
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct Transaction {
@@ -20,6 +10,7 @@ pub struct Transaction {
     pub amount: f64,
     pub iso_currency_code: String,
     pub date: String,
+    pub datetime: String,
     pub name: String,
     pub merchant_name: String,
     pub payment_channel: String,
@@ -34,80 +25,12 @@ pub struct TransactionSQL {
     pub amount: f64,
     pub iso_currency_code: String,
     pub date: String,
+    pub datetime: String,
     pub name: String,
     pub merchant_name: String,
     pub payment_channel: String,
     pub pending: bool,
     pub category: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
-enum Primary {
-    Income,
-    TransferIn,
-    TransferOut,
-    LoanPayments,
-    BankFees,
-    Entertainment,
-    FoodAndDrink,
-    GeneralMerchandise,
-    HomeImprovement,
-    Medical,
-    PersonalCare,
-    GeneralServices,
-    GovernmentAndNonProfit,
-    Transportation,
-    Travel,
-    RentAndUtilities,
-}
-
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
-enum Detailed {
-    IncomeDividends,
-    IncomeInterestEarned,
-    IncomeRetirementPension,
-    IncomeTaxRefund,
-    IncomeUnemployment,
-    IncomeWages,
-    IncomeOtherIncome,
-    TransferInCashAdvancesAndLoans,
-    TransferInDeposit,
-    TransferInInvestmentAndRetirementFunds,
-    TransferInSavings,
-    TransferInAccountTransfer,
-    TransferInOtherTransferIn,
-    TransferOutInvestmentAndRetirementFunds,
-    TransferOutSavings,
-    TransferOutWithdrawal,
-    TransferOutAccountTransfer,
-    TransferOutOtherTransferOut,
-    LoanPaymentsCarPayment,
-    LoanPaymentsCreditCardPayment,
-    LoanPaymentsPersonalLoanPayment,
-    LoanPaymentsMortgagePayment,
-    LoanPaymentsStudentLoanPayment,
-    LoanPaymentsOtherPayment,
-    BankFeesAtmFees,
-    BankFeesForeignTransactionFees,
-    BankFeesInsufficientFunds,
-    BankFeesInterestCharge,
-    BankFeesOverdraftFees,
-    BankFeesOtherBankFees,
-    EntertainmentCasinosAndGambling,
-    EntertainmentMusicAndAudio,
-    EntertainmentSportingEventsAmusementParksAndMuseums,
-    EntertainmentTvAndMovies,
-    EntertainmentVideoGames,
-    EntertainmentOtherEntertainment,
-    FoodAndDrinkBeerWineAndLiquor,
-    FoodAndDrinkCoffee,
-    FoodAndDrinkFastFood,
-    FoodAndDrinkGroceries,
-    FoodAndDrinkRestaurant,
-    FoodAndDrinkVendingMachines,
-    FoodAndDrinkOtherFoodAndDrink,
-    GeneralMerchandiseBookstoresAndNewsstands,
-    GeneralMerchandiseClothingAndAccessories,
 }
 
 #[enum_def] // => Generates PersonalFinanceCategoryIden NOTE: Move

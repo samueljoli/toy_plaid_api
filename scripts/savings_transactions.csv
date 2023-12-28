@@ -1,5 +1,5 @@
-name,merchant_name,payment_channel,amount,date,personal_finance_category
-Bank Transfer,Plaid Gold Saving,online,1670.0,2023-11-01,TRANSFER_IN_SAVINGS
-Bank Transfer,Plaid Gold Saving,online,1670.0,2023-11-15,TRANSFER_IN_SAVINGS
-Bank Transfer,Plaid Gold Saving,online,1670.0,2023-12-01,TRANSFER_IN_SAVINGS
-Bank Transfer,Plaid Gold Saving,online,1670.0,2023-12-15,TRANSFER_IN_SAVINGS
+name,merchant_name,payment_channel,amount,date,datetime,personal_finance_category
+Bank Transfer,Plaid Gold Saving,online,1670.0,2023-11-01,2023-11-01T04:55:56Z,TRANSFER_IN_SAVINGS
+Bank Transfer,Plaid Gold Saving,online,1670.0,2023-11-15,2023-11-15T14:54:28Z,TRANSFER_IN_SAVINGS
+Bank Transfer,Plaid Gold Saving,online,1670.0,2023-12-01,2023-12-01T00:57:33Z,TRANSFER_IN_SAVINGS
+Bank Transfer,Plaid Gold Saving,online,1670.0,2023-12-15,2023-12-15T03:21:53Z,TRANSFER_IN_SAVINGS

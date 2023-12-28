@@ -1,5 +1,9 @@
 use sea_query::{Expr, PostgresQueryBuilder, Query};
-use sqlx::{postgres::PgRow, types::chrono::NaiveDate, Pool, Postgres, Row};
+use sqlx::{
+    postgres::PgRow,
+    types::chrono::{NaiveDate, NaiveDateTime},
+    Pool, Postgres, Row,
+};
 
 use crate::resources::transactions::models::PersonalFinanceCategoryIden;
 
@@ -14,6 +18,7 @@ pub async fn select_trx_by_id(id: i32, db: &Pool<Postgres>) -> Transaction {
             TransactionIden::Amount,
             TransactionIden::IsoCurrencyCode,
             TransactionIden::Date,
+            TransactionIden::Datetime,
             TransactionIden::Name,
             TransactionIden::MerchantName,
             TransactionIden::PaymentChannel,
@@ -33,6 +38,10 @@ pub async fn select_trx_by_id(id: i32, db: &Pool<Postgres>) -> Transaction {
                 .try_get::<NaiveDate, _>("date")
                 .unwrap()
                 .format("%Y-%m-%d")
+                .to_string(),
+            datetime: row
+                .try_get::<NaiveDateTime, _>("datetime")
+                .unwrap()
                 .to_string(),
             name: row.try_get("name").unwrap(),
             merchant_name: row.try_get("merchant_name").unwrap(),
@@ -56,6 +65,7 @@ pub async fn select_all_from_transaction(
             (TransactionIden::Table, TransactionIden::Amount),
             (TransactionIden::Table, TransactionIden::IsoCurrencyCode),
             (TransactionIden::Table, TransactionIden::Date),
+            (TransactionIden::Table, TransactionIden::Datetime),
             (TransactionIden::Table, TransactionIden::Name),
             (TransactionIden::Table, TransactionIden::MerchantName),
             (TransactionIden::Table, TransactionIden::PaymentChannel),
@@ -94,6 +104,10 @@ pub async fn select_all_from_transaction(
                 .try_get::<NaiveDate, _>("date")
                 .unwrap()
                 .format("%Y-%m-%d")
+                .to_string(),
+            datetime: row
+                .try_get::<NaiveDateTime, _>("datetime")
+                .unwrap()
                 .to_string(),
             name: row.try_get("name").unwrap(),
             merchant_name: row.try_get("merchant_name").unwrap(),

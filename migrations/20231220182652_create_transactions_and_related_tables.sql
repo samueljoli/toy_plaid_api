@@ -7,18 +7,19 @@ CREATE TABLE account (
   type VARCHAR(255) NOT NULL
 );
 CREATE TABLE personal_finance_category (
-  id SERIAL PRIMARY KEY, 
-  primary_category VARCHAR(255) NOT NULL, 
-  detailed VARCHAR(255) NOT NULL
+  id SERIAL PRIMARY KEY,
+  detailed VARCHAR(255) NOT NULL,
+  primary_category VARCHAR(255) NOT NULL
 );
 CREATE TABLE transaction (
   id SERIAL PRIMARY KEY, 
   account_id INT REFERENCES account(id), 
   amount FLOAT NOT NULL, 
+  date DATE NOT NULL,
+  datetime TIMESTAMP NOT NULL,
   iso_currency_code VARCHAR(255) NOT NULL, 
-  date DATE NOT NULL, 
-  name VARCHAR(255) NOT NULL, 
   merchant_name VARCHAR(255) NOT NULL, 
+  name VARCHAR(255) NOT NULL, 
   payment_channel VARCHAR(255) NOT NULL, 
   pending BOOLEAN NOT NULL, 
   personal_finance_category_id INT REFERENCES personal_finance_category(id)
