@@ -28,6 +28,20 @@ pub struct Transaction {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct TransactionSQL {
+    pub id: i32,
+    pub account_id: i32, // Foreign key Account
+    pub amount: f64,
+    pub iso_currency_code: String,
+    pub date: String,
+    pub name: String,
+    pub merchant_name: String,
+    pub payment_channel: String,
+    pub pending: bool,
+    pub category: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 enum Primary {
     Income,
     TransferIn,

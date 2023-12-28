@@ -3,7 +3,7 @@ use sqlx::{postgres::PgRow, types::chrono::NaiveDate, Pool, Postgres, Row};
 
 use crate::resources::transactions::models::PersonalFinanceCategoryIden;
 
-use super::models::{Transaction, TransactionIden};
+use super::models::{Transaction, TransactionIden, TransactionSQL};
 
 pub async fn select_trx_by_id(id: i32, db: &Pool<Postgres>) -> Transaction {
     let query = Query::select()
@@ -25,8 +25,8 @@ pub async fn select_trx_by_id(id: i32, db: &Pool<Postgres>) -> Transaction {
 
     sqlx::query::<Postgres>(&query)
         .map(|row: PgRow| Transaction {
-            id: row.try_get(0).expect("TO GET ID"),
-            account_id: row.try_get("account_id").expect("TO GET ACCOUNT ID"),
+            id: row.try_get("id").unwrap(),
+            account_id: row.try_get("account_id").unwrap(),
             amount: row.try_get("amount").unwrap(),
             iso_currency_code: row.try_get("iso_currency_code").unwrap(),
             date: row
@@ -45,9 +45,11 @@ pub async fn select_trx_by_id(id: i32, db: &Pool<Postgres>) -> Transaction {
         .unwrap()
 }
 
-pub async fn select_all_from_transaction(account_id: i32, db: &Pool<Postgres>) -> Vec<Transaction> {
+pub async fn select_all_from_transaction(
+    account_id: i32,
+    db: &Pool<Postgres>,
+) -> Vec<TransactionSQL> {
     let query = Query::select()
-        .from(TransactionIden::Table)
         .columns(vec![
             (TransactionIden::Table, TransactionIden::Id),
             (TransactionIden::Table, TransactionIden::AccountId),
@@ -63,9 +65,12 @@ pub async fn select_all_from_transaction(account_id: i32, db: &Pool<Postgres>) -
                 TransactionIden::PersonalFinanceCategoryId,
             ),
         ])
-        // and where transaction.id == account_id
+        .column((
+            PersonalFinanceCategoryIden::Table,
+            PersonalFinanceCategoryIden::Detailed,
+        ))
+        .from(TransactionIden::Table)
         .and_where(Expr::col((TransactionIden::Table, TransactionIden::AccountId)).eq(account_id))
-        // left_join on personal_finance_category
         .left_join(
             PersonalFinanceCategoryIden::Table,
             Expr::col((
@@ -80,9 +85,9 @@ pub async fn select_all_from_transaction(account_id: i32, db: &Pool<Postgres>) -
         .to_string(PostgresQueryBuilder);
 
     sqlx::query::<Postgres>(&query)
-        .map(|row: PgRow| Transaction {
-            id: row.try_get(0).expect("TO GET ID"),
-            account_id: row.try_get("account_id").expect("TO GET ACCOUNT ID"),
+        .map(|row: PgRow| TransactionSQL {
+            id: row.try_get("id").unwrap(),
+            account_id: row.try_get("account_id").unwrap(),
             amount: row.try_get("amount").unwrap(),
             iso_currency_code: row.try_get("iso_currency_code").unwrap(),
             date: row
@@ -94,7 +99,7 @@ pub async fn select_all_from_transaction(account_id: i32, db: &Pool<Postgres>) -
             merchant_name: row.try_get("merchant_name").unwrap(),
             payment_channel: row.try_get("payment_channel").unwrap(),
             pending: row.try_get("pending").unwrap(),
-            personal_finance_category_id: row.try_get("personal_finance_category_id").unwrap(),
+            category: row.try_get("detailed").unwrap(),
         })
         .fetch_all(db)
         .await

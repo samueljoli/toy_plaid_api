@@ -20,7 +20,7 @@ clean:
 
 # Run server and watch for changes
 dev:
-	@cargo watch -x run
+	RUST_BACKTRACE=1 cargo watch -x run
 
 lint:
 	@cargo clippy --fix; cargo fmt
