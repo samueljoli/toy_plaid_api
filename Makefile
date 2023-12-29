@@ -27,3 +27,6 @@ lint:
 
 migrate:
 	@sqlx migrate run --database-url postgres://postgres:password@localhost:5432/plaid
+
+seed_db:
+	@node ./scripts/seed_db.js

@@ -1,5 +1,11 @@
+CREATE TABLE Company (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  slug VARCHAR(255) NOT NULL
+);
 CREATE TABLE account (
   id SERIAL PRIMARY KEY, 
+  company_id INT REFERENCES company(id) NOT NULL,
   mask VARCHAR(255) NOT NULL, 
   name VARCHAR(255) NOT NULL, 
   official_name VARCHAR(255) NOT NULL, 
@@ -13,7 +19,7 @@ CREATE TABLE personal_finance_category (
 );
 CREATE TABLE transaction (
   id SERIAL PRIMARY KEY, 
-  account_id INT REFERENCES account(id), 
+  account_id INT REFERENCES account(id) NOT NULL,
   amount FLOAT NOT NULL, 
   date DATE NOT NULL,
   datetime TIMESTAMP NOT NULL,
@@ -22,15 +28,7 @@ CREATE TABLE transaction (
   name VARCHAR(255) NOT NULL, 
   payment_channel VARCHAR(255) NOT NULL, 
   pending BOOLEAN NOT NULL, 
-  personal_finance_category_id INT REFERENCES personal_finance_category(id)
-);
-CREATE TABLE items (
-  id SERIAL PRIMARY KEY, 
-  consent_expiration_time TIMESTAMP, 
-  error VARCHAR(255), 
-  institution_id VARCHAR(255) NOT NULL, 
-  update_type VARCHAR(255) NOT NULL, 
-  webhook VARCHAR(255) NOT NULL
+  personal_finance_category_id INT REFERENCES personal_finance_category(id) NOT NULL
 );
 
 ALTER TABLE

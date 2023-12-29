@@ -20,6 +20,8 @@ use resources::transactions;
 
 use resources::accounts;
 
+use resources::companies;
+
 #[derive(Debug, Clone)]
 pub struct AppState {
     config: settings::Settings,
@@ -29,14 +31,17 @@ pub struct AppState {
 #[derive(OpenApi)]
 #[openapi(
     paths(
-        transactions::router::get_transaction_by_id,
-        transactions::router::get_all_transactions,
         accounts::router::get_account_by_id,
         accounts::router::get_all_accounts,
+        companies::router::get_company_by_id,
+        companies::router::get_company_by_slug,
+        transactions::router::get_all_transactions,
+        transactions::router::get_transaction_by_id,
     ),
     components(
         schemas(transactions::models::Transaction),
         schemas(accounts::models::Account),
+        schemas(companies::models::Company),
     ),
     tags(
         (name = "🧸 Toy Plaid API", description = "A toy implementation of the Plaid API")
