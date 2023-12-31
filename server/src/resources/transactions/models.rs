@@ -23,14 +23,14 @@ pub struct TransactionSQL {
     pub id: i32,
     pub account_id: i32, // Foreign key Account
     pub amount: f64,
-    pub iso_currency_code: String,
+    pub category: String,
     pub date: String,
     pub datetime: String,
-    pub name: String,
+    pub iso_currency_code: String,
     pub merchant_name: String,
+    pub name: String,
     pub payment_channel: String,
     pub pending: bool,
-    pub category: String,
 }
 
 #[enum_def] // => Generates PersonalFinanceCategoryIden NOTE: Move

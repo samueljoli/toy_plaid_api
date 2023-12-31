@@ -7,7 +7,7 @@ use axum::{
 
 use crate::AppState;
 
-use super::sql::{select_account_by_id, select_account_by_slug};
+use super::sql::{select_company_by_id, select_transactions_by_account};
 
 #[utoipa::path(
     get,
@@ -24,29 +24,18 @@ pub async fn get_company_by_id(
     Path(id): Path<i32>,
     State(app_state): State<AppState>,
 ) -> impl IntoResponse {
-    Json(select_account_by_id(id, &app_state.db).await)
+    Json(select_company_by_id(id, &app_state.db).await)
 }
 
-#[utoipa::path(
-    get,
-    path = "/companies/{slug}",
-    responses(
-        (status = OK, body = Company),
-        (status = NOT_FOUND)
-    ),
-    params(
-        ("slug" = String, Path, description = "slug for a single company"),
-    )
-)]
-pub async fn get_company_by_slug(
-    Path(slug): Path<String>,
+pub async fn transactions_dashboard(
+    Path(id): Path<i32>,
     State(app_state): State<AppState>,
 ) -> impl IntoResponse {
-    Json(select_account_by_slug(&slug, &app_state.db).await)
+    Json(select_transactions_by_account(id, &app_state.db).await)
 }
 
 pub fn api() -> Router<AppState> {
     Router::new()
         .route("/companies/:id", get(get_company_by_id))
-        .route("/companies/:slug", get(get_company_by_slug))
+        .route("/companies/:id/dashboard", get(transactions_dashboard))
 }

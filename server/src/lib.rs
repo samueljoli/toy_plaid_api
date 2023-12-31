@@ -34,7 +34,6 @@ pub struct AppState {
         accounts::router::get_account_by_id,
         accounts::router::get_all_accounts,
         companies::router::get_company_by_id,
-        companies::router::get_company_by_slug,
         transactions::router::get_all_transactions,
         transactions::router::get_transaction_by_id,
     ),
@@ -54,6 +53,7 @@ fn make_main_router(config: settings::Settings, db: Pool<Postgres>) -> Router {
         .merge(Router::new().route("/health", get(|| async { Ok::<_, ()>(()) })))
         .merge(resources::transactions::router::api())
         .merge(resources::accounts::router::api())
+        .merge(resources::companies::router::api())
         .merge(Redoc::with_url("/redoc", ApiDoc::openapi()))
         .layer(ServiceBuilder::new().layer(CorsLayer::new().allow_origin(Any)))
         .with_state(AppState { config, db })

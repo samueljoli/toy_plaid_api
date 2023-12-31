@@ -1,9 +1,10 @@
 use sea_query::enum_def;
 use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
 use utoipa::ToSchema;
 
 #[enum_def] // => Generates AccountIden
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
+#[derive(FromRow, Serialize, Deserialize, Debug, ToSchema)]
 pub struct Account {
     pub id: i32,
     pub mask: String,
@@ -11,4 +12,5 @@ pub struct Account {
     pub official_name: String,
     pub r#type: String,
     pub subtype: String,
+    pub company_id: i32,
 }
