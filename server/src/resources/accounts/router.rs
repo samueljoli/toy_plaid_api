@@ -17,7 +17,8 @@ use super::sql::{select_account_by_id, select_all_from_account};
     ),
     params(
         ("id" = i32, Path, description = "identifier for a single account"),
-    )
+    ),
+    tag = "Accounts"
 )]
 pub async fn get_account_by_id(
     Path(id): Path<i32>,
@@ -35,7 +36,8 @@ pub async fn get_account_by_id(
     ),
     params(
         ("id" = i32, Path, description = "identifier for a single transaction"),
-    )
+    ),
+    tag = "Accounts"
 )]
 pub async fn get_all_accounts(State(app_state): State<AppState>) -> impl IntoResponse {
     Json(select_all_from_account(&app_state.db).await)

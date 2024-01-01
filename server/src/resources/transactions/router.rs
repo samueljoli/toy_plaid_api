@@ -19,7 +19,8 @@ use super::sql::{select_all_from_transaction, select_trx_by_id};
     ),
     params(
         ("id" = i32, Path, description = "identifier for a single transaction"),
-    )
+    ),
+    tag = "Transactions"
 )]
 pub async fn get_transaction_by_id(
     Path(id): Path<i32>,
@@ -37,7 +38,8 @@ pub async fn get_transaction_by_id(
     ),
     params(
         ("id" = i32, Path, description = "identifier for a single transaction"),
-    )
+    ),
+    tag = "Transactions"
 )]
 pub async fn get_all_transactions(
     Query(params): Query<HashMap<String, i32>>,

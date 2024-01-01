@@ -18,7 +18,8 @@ use super::sql::{select_company_by_id, select_transactions_by_account};
     ),
     params(
         ("id" = i32, Path, description = "identifier for a single transaction"),
-    )
+    ),
+    tag = "Companies"
 )]
 pub async fn get_company_by_id(
     Path(id): Path<i32>,
