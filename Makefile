@@ -20,7 +20,10 @@ clean:
 
 # Run server and watch for changes
 dev:
-	RUST_BACKTRACE=1 cargo watch -x run
+	RUST_BACKTRACE=1 cargo watch -x 'run -- --bin toy_plaid_api'
+
+celery:
+	cargo run --bin celery
 
 lint:
 	@cargo clippy --fix; cargo fmt

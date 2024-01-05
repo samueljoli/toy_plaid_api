@@ -1,8 +1,11 @@
+use std::sync::Arc;
+
 use axum::{
     routing::{get, IntoMakeService},
     serve::Serve,
     Router,
 };
+use celery::{prelude::*, Celery};
 use sqlx::{Pool, Postgres};
 use tokio::net::TcpListener;
 use tower::ServiceBuilder;
@@ -24,10 +27,11 @@ use resources::companies;
 
 use resources::items;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct AppState {
     config: settings::Settings,
     db: Pool<Postgres>,
+    celery_app: Arc<Celery>,
 }
 
 #[derive(OpenApi)]
@@ -56,21 +60,39 @@ pub struct AppState {
 )]
 struct ApiDoc;
 
-fn make_main_router(config: settings::Settings, db: Pool<Postgres>) -> Router {
+pub async fn make_celery_app() -> Arc<Celery> {
+    celery::app!(
+        broker = RedisBroker { std::env::var("REDIS_ADDR").unwrap_or_else(|_| "redis://127.0.0.1:6379/".into()) },
+        tasks = [items::tasks::add],
+        task_routes = [
+            "*" => "celery",
+        ],
+        prefetch_count = 2
+    ).await.unwrap()
+}
+
+async fn core_router(config: settings::Settings, db: Pool<Postgres>) -> Router {
+    let celery_app = make_celery_app().await;
+
     Router::new()
         .merge(Router::new().route("/health", get(|| async { Ok::<_, ()>(()) })))
         .merge(resources::transactions::router::api())
         .merge(resources::accounts::router::api())
         .merge(resources::companies::router::api())
+        .merge(resources::items::router::api())
         .merge(Redoc::with_url("/redoc", ApiDoc::openapi()))
         .layer(ServiceBuilder::new().layer(CorsLayer::new().allow_origin(Any)))
-        .with_state(AppState { config, db })
+        .with_state(AppState {
+            config,
+            db,
+            celery_app,
+        })
 }
 
-pub fn make_server(
+pub async fn make_server(
     listener: TcpListener,
     config: settings::Settings,
     db: Pool<Postgres>,
 ) -> Serve<IntoMakeService<Router>, Router> {
-    axum::serve(listener, make_main_router(config, db).into_make_service())
+    axum::serve(listener, core_router(config, db).await.into_make_service())
 }
