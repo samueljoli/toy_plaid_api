@@ -1,11 +1,27 @@
-CREATE TABLE Company (
+CREATE TABLE credential (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+CREATE TABLE institution (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+CREATE TABLE item (
+  id SERIAL PRIMARY KEY,
+  access_token VARCHAR(255) NOT NULL,
+  credential_id INT REFERENCES credential(id) NOT NULL,
+  institution_id INT REFERENCES institution(id) NOT NULL,
+  webhook VARCHAR(255) NOT NULL
+);
+CREATE TABLE company (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   slug VARCHAR(255) NOT NULL
 );
 CREATE TABLE account (
   id SERIAL PRIMARY KEY, 
-  company_id INT REFERENCES company(id) NOT NULL,
+  item_id INT REFERENCES item(id) NOT NULL,
   mask VARCHAR(255) NOT NULL, 
   name VARCHAR(255) NOT NULL, 
   official_name VARCHAR(255) NOT NULL, 

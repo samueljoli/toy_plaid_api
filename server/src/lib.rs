@@ -22,6 +22,8 @@ use resources::accounts;
 
 use resources::companies;
 
+use resources::items;
+
 #[derive(Debug, Clone)]
 pub struct AppState {
     config: settings::Settings,
@@ -36,14 +38,20 @@ pub struct AppState {
         companies::router::get_company_by_id,
         transactions::router::get_all_transactions,
         transactions::router::get_transaction_by_id,
+        items::router::post_item,
     ),
     components(
         schemas(transactions::models::Transaction),
         schemas(accounts::models::Account),
         schemas(companies::models::Company),
+        schemas(items::models::Item),
     ),
-    tags(
-        (name = "🧸 Toy Plaid API", description = "A toy implementation of the Plaid API")
+    info(
+        title = "🧸 Toy Plaid API",
+        description = "
+            This is a toy API that mimics the Plaid API. It is not intended to be used in production.
+            It is intended to be used as a learning tool for the Rust programming language.
+"
     )
 )]
 struct ApiDoc;

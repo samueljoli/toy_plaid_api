@@ -43,6 +43,14 @@ const seed_company = async (client) => {
   }).returning("id")
 }
 
+const seed_institution = async (client) => {
+  log("Seeding institution...")
+
+  return client('institution').insert({
+    name: 'Brex',
+  })
+}
+
 const seed_personal_finance_categories = async (client) => {
   log("Seeding personal finance categories...")
 
@@ -56,8 +64,6 @@ const seed_personal_finance_categories = async (client) => {
 
 const seed_checkings_account = async (client, categories_map, company) => {
   log("Seeding checkings account...")
-
-  let checking_transactions = []
 
   const [account] = await client('account').insert(
     {
@@ -99,13 +105,14 @@ const seed_checkings_account = async (client, categories_map, company) => {
   })
 
   client.transaction(async function(trx) {
-    const categories = await seed_personal_finance_categories(trx);
+    await seed_personal_finance_categories(trx);
 
-    const categories_map = category_name_to_id_map(categories)
+    // const categories_map = category_name_to_id_map(categories)
+    await seed_company(trx);
 
-    const [company] = await seed_company(trx);
+    await seed_institution(trx);
 
-    await seed_checkings_account(trx, categories_map, company);
+    // await seed_checkings_account(trx, categories_map, company);
   })
     .then(function() {
       log("Closing connection")

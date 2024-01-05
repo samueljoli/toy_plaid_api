@@ -12,6 +12,38 @@ use super::sql::{select_all_from_transaction, select_trx_by_id};
 
 #[utoipa::path(
     get,
+    path = "/transactions/auth",
+    responses(
+        (status = OK, body = Auth),
+        (status = NOT_FOUND)
+    ),
+    // tag = "Transactions",
+)]
+pub async fn get_token(
+    Path(id): Path<i32>,
+    State(app_state): State<AppState>,
+) -> impl IntoResponse {
+    Json(select_trx_by_id(id, &app_state.db).await)
+}
+
+#[utoipa::path(
+    get,
+    path = "/transactions/sandbox/fire_webhook",
+    responses(
+        (status = OK, body = Webhook),
+        (status = NOT_FOUND)
+    ),
+    // tag = "Transactions",
+)]
+pub async fn fire_webhook(
+    Path(id): Path<i32>,
+    State(app_state): State<AppState>,
+) -> impl IntoResponse {
+    Json(select_trx_by_id(id, &app_state.db).await)
+}
+
+#[utoipa::path(
+    get,
     path = "/transactions/{id}",
     responses(
         (status = OK, body = Transaction),
