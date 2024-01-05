@@ -1,9 +1,10 @@
 use sea_query::enum_def;
 use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
 use utoipa::ToSchema;
 
 #[enum_def] // => Generates TransactionIden
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
+#[derive(FromRow, Serialize, Deserialize, Debug, ToSchema)]
 pub struct Transaction {
     pub id: i32,
     pub account_id: i32, // Foreign key Account

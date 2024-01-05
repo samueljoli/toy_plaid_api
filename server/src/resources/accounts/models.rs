@@ -12,5 +12,5 @@ pub struct Account {
     pub official_name: String,
     pub r#type: String,
     pub subtype: String,
-    pub company_id: i32,
+    pub item_id: i32,
 }

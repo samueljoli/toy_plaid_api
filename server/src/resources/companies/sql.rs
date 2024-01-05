@@ -10,6 +10,7 @@ use sqlx::{
 
 use crate::resources::{
     accounts::models::AccountIden,
+    items::models::ItemIden,
     transactions::models::{PersonalFinanceCategoryIden, TransactionIden, TransactionSQL},
 };
 
@@ -76,14 +77,11 @@ pub struct CompanyWithAccounts {
 /// WHERE  "company"."id" = 1
 /// ORDER  BY "transaction"."datetime" DESC
 pub async fn select_transactions_by_account(
-    company_id: i32,
+    item_id: i32,
     db: &Pool<Postgres>,
 ) -> CompanyWithAccounts {
     let query = Query::select()
-        .columns(vec![
-            (CompanyIden::Table, CompanyIden::Id),
-            (CompanyIden::Table, CompanyIden::Slug),
-        ])
+        .columns(vec![(ItemIden::Table, ItemIden::Id)])
         .column((AccountIden::Table, AccountIden::Id))
         .columns(vec![
             (TransactionIden::Table, TransactionIden::Id),
@@ -105,11 +103,11 @@ pub async fn select_transactions_by_account(
             PersonalFinanceCategoryIden::Table,
             PersonalFinanceCategoryIden::Detailed,
         ))
-        .from(CompanyIden::Table)
+        .from(ItemIden::Table)
         .left_join(
             AccountIden::Table,
-            Expr::col((CompanyIden::Table, CompanyIden::Id))
-                .equals((AccountIden::Table, AccountIden::CompanyId)),
+            Expr::col((ItemIden::Table, ItemIden::Id))
+                .equals((AccountIden::Table, AccountIden::ItemId)),
         )
         .left_join(
             TransactionIden::Table,
@@ -128,8 +126,8 @@ pub async fn select_transactions_by_account(
             )),
         )
         .expr_as(
-            Expr::col((CompanyIden::Table, CompanyIden::Id)),
-            Alias::new("company_id"),
+            Expr::col((ItemIden::Table, ItemIden::Id)),
+            Alias::new("item_id"),
         )
         .expr_as(
             Expr::col((AccountIden::Table, AccountIden::Id)),
@@ -139,7 +137,7 @@ pub async fn select_transactions_by_account(
             Expr::col(PersonalFinanceCategoryIden::Detailed),
             Alias::new("category"),
         )
-        .and_where(Expr::col((CompanyIden::Table, CompanyIden::Id)).eq(company_id))
+        .and_where(Expr::col((ItemIden::Table, ItemIden::Id)).eq(item_id))
         .order_by(
             (TransactionIden::Table, TransactionIden::Datetime),
             Order::Desc,
@@ -171,7 +169,7 @@ pub async fn select_transactions_by_account(
         .await
         .unwrap();
 
-    let company = select_company_by_id(company_id, db).await;
+    let company = select_company_by_id(item_id, db).await;
 
     let mut accounts: HashMap<i32, Vec<TransactionSQL>> = HashMap::new();
 
@@ -205,7 +203,7 @@ pub async fn select_transactions_by_account(
         .collect();
 
     CompanyWithAccounts {
-        company_id,
+        company_id: item_id,
         company_name: company.name,
         accounts: accounts_with_transactions,
     }

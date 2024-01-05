@@ -39,3 +39,32 @@ pub async fn select_all_from_account(db: &Pool<Postgres>) -> Vec<Account> {
         .await
         .unwrap()
 }
+
+pub async fn insert_account(item_id: i32, db: &Pool<Postgres>) -> Account {
+    let query = Query::insert()
+        .into_table(AccountIden::Table)
+        .columns(vec![
+            AccountIden::Mask,
+            AccountIden::Name,
+            AccountIden::OfficialName,
+            AccountIden::Subtype,
+            AccountIden::RType,
+            AccountIden::ItemId,
+        ])
+        .values_panic(vec![
+            "0000".into(),
+            "Plaid Checking".into(),
+            "Plaid Gold Checking".into(),
+            "checking".into(),
+            "depository".into(),
+            item_id.into(),
+        ])
+        .returning_all()
+        .to_string(PostgresQueryBuilder)
+        .to_owned();
+
+    sqlx::query_as::<Postgres, Account>(&query)
+        .fetch_one(db)
+        .await
+        .unwrap()
+}
