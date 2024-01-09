@@ -16,7 +16,7 @@ use sea_query::{PostgresQueryBuilder, Query};
 use serde_derive::{Deserialize, Serialize};
 use sqlx::{
     types::chrono::{NaiveDate, NaiveDateTime},
-    Pool, Postgres,
+    Postgres,
 };
 
 use super::{sql::insert_item, tasks::add};
@@ -28,10 +28,12 @@ pub struct CreateItem {
     pub webhook: String,
 }
 
-pub async fn categories_name_to_id_map(db: &Pool<Postgres>) -> HashMap<String, i32> {
+pub async fn categories_name_to_id_map(
+    trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
+) -> HashMap<String, i32> {
     let mut map: HashMap<String, i32> = HashMap::new();
 
-    let categories = select_all_categories(db).await;
+    let categories = select_all_categories(trx).await;
 
     for category in categories {
         map.insert(category.detailed, category.id);
@@ -89,15 +91,17 @@ pub async fn post_item(
     State(app_state): State<AppState>,
     Json(payload): Json<CreateItem>,
 ) -> impl IntoResponse {
-    let credential = insert_credential(payload.email, payload.password, &app_state.db).await;
+    let mut trx = app_state.db.begin().await.unwrap();
 
-    let institution = select_institution_by_name("Brex", &app_state.db).await;
+    let credential = insert_credential(payload.email, payload.password, &mut trx).await;
 
-    let item = insert_item(credential, institution.id, payload.webhook, &app_state.db).await;
+    let institution = select_institution_by_name("Brex", &mut trx).await;
 
-    let account = insert_account(item.id, &app_state.db).await;
+    let item = insert_item(credential, institution.id, payload.webhook, &mut trx).await;
 
-    let map = categories_name_to_id_map(&app_state.db).await;
+    let account = insert_account(item.id, &mut trx).await;
+
+    let map = categories_name_to_id_map(&mut trx).await;
 
     let transactions = get_transactions_from_csv();
 
@@ -141,9 +145,11 @@ pub async fn post_item(
     let query = builder.to_string(PostgresQueryBuilder);
 
     sqlx::query_as::<Postgres, Transaction>(&query)
-        .fetch_one(&app_state.db)
+        .fetch_one(&mut *trx)
         .await
         .unwrap();
+
+    trx.commit().await.unwrap();
 
     app_state
         .celery_app

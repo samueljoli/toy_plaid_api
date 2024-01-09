@@ -1,14 +1,15 @@
 use sea_query::{PostgresQueryBuilder, Query};
-use sqlx::{Pool, Postgres};
+use sqlx::Postgres;
 
 use super::models::{Credentials, CredentialsIden};
 
 pub async fn insert_credential(
     email: String,
     password: String,
-    db: &Pool<Postgres>,
+    trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
 ) -> Credentials {
     // TODO: Refactor to get or insert
+    let _thing = &mut **trx;
     let query = Query::insert()
         .into_table(CredentialsIden::Table)
         .columns(vec![CredentialsIden::Email, CredentialsIden::Password])
@@ -18,7 +19,7 @@ pub async fn insert_credential(
         .to_owned();
 
     sqlx::query_as::<Postgres, Credentials>(&query)
-        .fetch_one(db)
+        .fetch_one(&mut **trx)
         .await
         .unwrap()
 }

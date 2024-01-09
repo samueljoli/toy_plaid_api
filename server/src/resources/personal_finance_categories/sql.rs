@@ -1,9 +1,11 @@
 use sea_query::{PostgresQueryBuilder, Query};
-use sqlx::{Pool, Postgres};
+use sqlx::Postgres;
 
 use super::models::{PersonalFinanceCategory, PersonalFinanceCategoryIden};
 
-pub async fn select_all_categories(db: &Pool<Postgres>) -> Vec<PersonalFinanceCategory> {
+pub async fn select_all_categories(
+    trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
+) -> Vec<PersonalFinanceCategory> {
     let query = Query::select()
         .from(PersonalFinanceCategoryIden::Table)
         .columns(vec![
@@ -14,7 +16,7 @@ pub async fn select_all_categories(db: &Pool<Postgres>) -> Vec<PersonalFinanceCa
         .to_string(PostgresQueryBuilder);
 
     sqlx::query_as::<Postgres, PersonalFinanceCategory>(&query)
-        .fetch_all(db)
+        .fetch_all(&mut **trx)
         .await
         .unwrap()
 }

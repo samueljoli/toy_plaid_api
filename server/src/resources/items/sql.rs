@@ -1,6 +1,6 @@
 use base64::{engine::general_purpose, Engine as _};
 use sea_query::{PostgresQueryBuilder, Query};
-use sqlx::{Pool, Postgres};
+use sqlx::Postgres;
 
 use crate::resources::credentials::models::Credentials;
 
@@ -10,7 +10,7 @@ pub async fn insert_item(
     credentials: Credentials,
     institution_id: i32,
     webhook: String,
-    db: &Pool<Postgres>,
+    trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
 ) -> Item {
     let access_token: String = general_purpose::STANDARD_NO_PAD
         .encode(format!("{}-{}", credentials.email, credentials.password));
@@ -34,7 +34,7 @@ pub async fn insert_item(
         .to_owned();
 
     sqlx::query_as::<Postgres, Item>(&query)
-        .fetch_one(db)
+        .fetch_one(&mut **trx)
         .await
         .unwrap()
 }

@@ -40,7 +40,10 @@ pub async fn select_all_from_account(db: &Pool<Postgres>) -> Vec<Account> {
         .unwrap()
 }
 
-pub async fn insert_account(item_id: i32, db: &Pool<Postgres>) -> Account {
+pub async fn insert_account(
+    item_id: i32,
+    trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
+) -> Account {
     let query = Query::insert()
         .into_table(AccountIden::Table)
         .columns(vec![
@@ -64,7 +67,7 @@ pub async fn insert_account(item_id: i32, db: &Pool<Postgres>) -> Account {
         .to_owned();
 
     sqlx::query_as::<Postgres, Account>(&query)
-        .fetch_one(db)
+        .fetch_one(&mut **trx)
         .await
         .unwrap()
 }
