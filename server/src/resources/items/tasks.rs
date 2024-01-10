@@ -1,52 +1,36 @@
 use celery::prelude::*;
-
-use serde_derive::Deserialize;
-
-#[celery::task]
-pub fn add(x: i32, y: i32) -> TaskResult<i32> {
-    println!("Adding {} + {}", x, y);
-    Ok(x + y)
-}
-
-#[derive(Deserialize, Debug, Clone)]
-struct Row<'a> {
-    primary: &'a str,
-    detailed: &'a str,
-    description: &'a str,
-}
-
-// pub fn categories_name_to_id_map() {
-//     let mut path = std::env::current_dir().unwrap();
-//
-//     path.pop();
-//
-//     path.push("scripts");
-//
-//     let full_path = path.join("personal_finance_categories.csv");
-//
-//     let full_path = full_path.to_str().unwrap();
-//
-//     let mut map: HashMap<&str, String> = HashMap::new();
-//
-//     let mut reader = Reader::from_path(full_path).unwrap();
-//
-//     for record in reader.records() {
-//         // let row: Row = record.deserialize(None)?;
-//         let record = record.unwrap();
-//
-//         let row: Row = record.deserialize(None).unwrap();
-//
-//         map.insert(
-//
-//         )
-//     }
-// }
+use serde_json::{Map, Value};
 
 #[celery::task]
-pub fn build_integration() -> TaskResult<()> {
-    // let map = categories_name_to_id_map(db);
-    // create accounts
-    // create categories_map
-    // create transactions
-    Ok(())
+pub async fn fire_webhook(item_id: i32, url: String) -> TaskResult<()> {
+    println!("Firing webhook for item_id: {}", &item_id);
+
+    let mut payload = Map::new();
+    payload.insert(
+        "webhook_type".to_string(),
+        Value::String("TRANSACTIONS".to_string()),
+    );
+    payload.insert(
+        "webhook_code".to_string(),
+        Value::String("SYNC_UPDATES_AVAILABLE".to_string()),
+    );
+    payload.insert("item_id".to_string(), Value::String(item_id.to_string()));
+    payload.insert("initial_update_complete".to_string(), Value::Bool(true));
+    payload.insert("historical_update_complete".to_string(), Value::Bool(false));
+    payload.insert(
+        "environment".to_string(),
+        Value::String("production".to_string()),
+    );
+
+    let client = reqwest::Client::new();
+
+    let res = client.post(url).json(&payload).send().await;
+
+    match res {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            println!("Error: {}", e);
+            Ok(())
+        }
+    }
 }

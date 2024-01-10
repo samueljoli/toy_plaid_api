@@ -8,7 +8,7 @@ use utoipa::ToSchema;
 pub struct Item {
     pub id: i32,
     pub access_token: String,
-    pub credentials_id: i32,
+    pub credential_id: i32,
     pub institution_id: i32,
     pub webhook: String,
 }

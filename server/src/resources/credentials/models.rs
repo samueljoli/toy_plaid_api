@@ -5,7 +5,7 @@ use utoipa::ToSchema;
 
 #[enum_def]
 #[derive(FromRow, Serialize, Deserialize, ToSchema)]
-pub struct Credentials {
+pub struct Credential {
     pub id: i32,
     pub email: String,
     pub password: String,

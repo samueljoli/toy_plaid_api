@@ -63,7 +63,7 @@ struct ApiDoc;
 pub async fn make_celery_app() -> Arc<Celery> {
     celery::app!(
         broker = RedisBroker { std::env::var("REDIS_ADDR").unwrap_or_else(|_| "redis://127.0.0.1:6379/".into()) },
-        tasks = [items::tasks::add],
+        tasks = [items::tasks::fire_webhook],
         task_routes = [
             "*" => "celery",
         ],

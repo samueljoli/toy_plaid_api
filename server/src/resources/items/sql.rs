@@ -2,12 +2,12 @@ use base64::{engine::general_purpose, Engine as _};
 use sea_query::{PostgresQueryBuilder, Query};
 use sqlx::Postgres;
 
-use crate::resources::credentials::models::Credentials;
+use crate::resources::credentials::models::Credential;
 
 use super::models::{Item, ItemIden};
 
 pub async fn insert_item(
-    credentials: Credentials,
+    credentials: Credential,
     institution_id: i32,
     webhook: String,
     trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
@@ -19,7 +19,7 @@ pub async fn insert_item(
         .into_table(ItemIden::Table)
         .columns(vec![
             ItemIden::AccessToken,
-            ItemIden::CredentialsId,
+            ItemIden::CredentialId,
             ItemIden::InstitutionId,
             ItemIden::Webhook,
         ])

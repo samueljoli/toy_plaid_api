@@ -10,7 +10,7 @@ pub struct Account {
     pub mask: String,
     pub name: String,
     pub official_name: String,
-    pub r#type: String,
+    pub account_type: String,
     pub subtype: String,
     pub item_id: i32,
 }

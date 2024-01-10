@@ -51,7 +51,7 @@ pub async fn insert_account(
             AccountIden::Name,
             AccountIden::OfficialName,
             AccountIden::Subtype,
-            AccountIden::RType,
+            AccountIden::AccountType,
             AccountIden::ItemId,
         ])
         .values_panic(vec![

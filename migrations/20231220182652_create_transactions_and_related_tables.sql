@@ -26,7 +26,7 @@ CREATE TABLE account (
   name VARCHAR(255) NOT NULL, 
   official_name VARCHAR(255) NOT NULL, 
   subtype VARCHAR(255) NOT NULL, 
-  type VARCHAR(255) NOT NULL
+  account_type VARCHAR(255) NOT NULL
 );
 CREATE TABLE personal_finance_category (
   id SERIAL PRIMARY KEY,
