@@ -16,7 +16,7 @@ async fn main() {
         .max_connections(config.db_max_connections)
         .connect(&config.database_url)
         .await
-        .unwrap();
+        .expect("Failed to connect to database");
 
     let server = make_server(listener, config.clone(), db).await;
 

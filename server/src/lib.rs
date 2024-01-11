@@ -5,7 +5,7 @@ use axum::{
     serve::Serve,
     Router,
 };
-use celery::{prelude::*, Celery};
+use celery::Celery;
 use sqlx::{Pool, Postgres};
 use tokio::net::TcpListener;
 use tower::ServiceBuilder;
@@ -61,6 +61,7 @@ pub struct AppState {
 struct ApiDoc;
 
 pub async fn make_celery_app() -> Arc<Celery> {
+    // Fail fast and loudly if we can't connect to redis
     celery::app!(
         broker = RedisBroker { std::env::var("REDIS_ADDR").unwrap_or_else(|_| "redis://127.0.0.1:6379/".into()) },
         tasks = [items::tasks::fire_webhook],
@@ -68,7 +69,7 @@ pub async fn make_celery_app() -> Arc<Celery> {
             "*" => "celery",
         ],
         prefetch_count = 2
-    ).await.unwrap()
+    ).await.expect("Unable to create celery app")
 }
 
 async fn core_router(config: settings::Settings, db: Pool<Postgres>) -> Router {

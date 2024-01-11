@@ -1,7 +1,12 @@
 use celery::prelude::*;
 use serde_json::{Map, Value};
 
-#[celery::task]
+#[celery::task(
+    time_limit = 3,
+    max_retries = 100,
+    min_retry_delay = 1,
+    max_retry_delay = 60
+)]
 pub async fn fire_webhook(item_id: i32, url: String) -> TaskResult<()> {
     println!("Firing webhook for item_id: {}", &item_id);
 
@@ -24,13 +29,12 @@ pub async fn fire_webhook(item_id: i32, url: String) -> TaskResult<()> {
 
     let client = reqwest::Client::new();
 
-    let res = client.post(url).json(&payload).send().await;
+    client
+        .post(url)
+        .json(&payload)
+        .send()
+        .await
+        .with_unexpected_err(|| "Something happened")?;
 
-    match res {
-        Ok(_) => Ok(()),
-        Err(e) => {
-            println!("Error: {}", e);
-            Ok(())
-        }
-    }
+    Ok(())
 }
