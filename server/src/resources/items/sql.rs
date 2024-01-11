@@ -1,5 +1,5 @@
 use base64::{engine::general_purpose, Engine as _};
-use sea_query::{PostgresQueryBuilder, Query};
+use sea_query::{Expr, PostgresQueryBuilder, Query};
 use sqlx::Postgres;
 
 use crate::resources::credentials::models::Credential;
@@ -32,6 +32,47 @@ pub async fn insert_item(
         .returning_all()
         .to_string(PostgresQueryBuilder)
         .to_owned();
+
+    sqlx::query_as::<Postgres, Item>(&query)
+        .fetch_one(&mut **trx)
+        .await
+        .unwrap()
+}
+
+pub async fn select_item_by_id(id: i32, trx: &mut sqlx::Transaction<'_, sqlx::Postgres>) -> Item {
+    let query = Query::select()
+        .from(ItemIden::Table)
+        .columns(vec![
+            ItemIden::Id,
+            ItemIden::AccessToken,
+            ItemIden::CredentialId,
+            ItemIden::InstitutionId,
+            ItemIden::Webhook,
+        ])
+        .and_where(Expr::col(ItemIden::Id).eq(id))
+        .to_string(PostgresQueryBuilder);
+
+    sqlx::query_as::<Postgres, Item>(&query)
+        .fetch_one(&mut **trx)
+        .await
+        .unwrap()
+}
+
+pub async fn select_item_by_credential_id(
+    credential_id: i32,
+    trx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
+) -> Item {
+    let query = Query::select()
+        .from(ItemIden::Table)
+        .columns(vec![
+            ItemIden::Id,
+            ItemIden::AccessToken,
+            ItemIden::CredentialId,
+            ItemIden::InstitutionId,
+            ItemIden::Webhook,
+        ])
+        .and_where(Expr::col(ItemIden::CredentialId).eq(credential_id))
+        .to_string(PostgresQueryBuilder);
 
     sqlx::query_as::<Postgres, Item>(&query)
         .fetch_one(&mut **trx)
