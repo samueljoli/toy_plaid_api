@@ -3,6 +3,9 @@ CREATE TABLE credential (
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL
 );
+ALTER TABLE credential
+ADD CONSTRAINT unique_email_password UNIQUE (email, password);
+
 CREATE TABLE institution (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL
