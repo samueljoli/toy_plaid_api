@@ -7,6 +7,7 @@ use axum::{
     routing::get,
     Json, Router,
 };
+use tracing::instrument;
 
 use super::sql::{select_all_from_transaction, select_trx_by_id};
 
@@ -54,6 +55,7 @@ pub async fn fire_webhook(
     ),
     tag = "Transactions"
 )]
+#[instrument(name = "GET transaction by ID")]
 pub async fn get_transaction_by_id(
     Path(id): Path<i32>,
     State(app_state): State<AppState>,
@@ -73,6 +75,7 @@ pub async fn get_transaction_by_id(
     ),
     tag = "Transactions"
 )]
+#[instrument(name = "GET all transaction")]
 pub async fn get_all_transactions(
     Query(params): Query<HashMap<String, i32>>,
     State(app_state): State<AppState>,

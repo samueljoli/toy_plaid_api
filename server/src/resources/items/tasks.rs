@@ -1,5 +1,7 @@
 use celery::prelude::*;
+use reqwest::{Response, StatusCode};
 use serde_json::{Map, Value};
+use tracing::info;
 
 #[celery::task(
     time_limit = 3,
@@ -8,7 +10,7 @@ use serde_json::{Map, Value};
     max_retry_delay = 60
 )]
 pub async fn fire_webhook(item_id: i32, url: String) -> TaskResult<()> {
-    println!("Firing webhook for item_id: {}", &item_id);
+    info!("Firing webhook for item_id: {}", &item_id);
 
     let mut payload = Map::new();
     payload.insert(
@@ -29,12 +31,24 @@ pub async fn fire_webhook(item_id: i32, url: String) -> TaskResult<()> {
 
     let client = reqwest::Client::new();
 
-    client
+    let response: Response = client
         .post(url)
         .json(&payload)
         .send()
         .await
-        .with_unexpected_err(|| "Something happened")?;
+        .with_unexpected_err(|| "unexpected error occurred attempting to send webhook")?;
 
-    Ok(())
+    match response.status() {
+        StatusCode::OK => {
+            // Only accept 200 OK responses
+            Ok(())
+        }
+        _ => {
+            // Retry on all other responses
+            Err(TaskError::ExpectedError(format!(
+                "Received non-OK status: {}",
+                response.status()
+            )))
+        }
+    }
 }

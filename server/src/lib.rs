@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{fmt, sync::Arc};
 
 use axum::{
     routing::{get, IntoMakeService},
@@ -32,6 +32,16 @@ pub struct AppState {
     config: settings::Settings,
     db: Pool<Postgres>,
     celery_app: Arc<Celery>,
+}
+
+impl fmt::Debug for AppState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("AppState")
+            .field("config", &self.config)
+            .field("db", &self.db)
+            .field("celery_app", &"Celery Placeholder")
+            .finish()
+    }
 }
 
 #[derive(OpenApi)]
